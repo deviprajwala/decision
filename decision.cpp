@@ -106,32 +106,32 @@ class amphibian : public animals
   int amphibian_birth_yes;//number of amphibians which gives birth
   int amphibian_birth_no;//number of amphibians which doesen't give birth
   int amphibian_aquatic_yes;//number of amphibians which are aquatic
-  int amphibian_aquatic_no;//number of fishes which are not aquatic
-  int amphibian_aerial_yes;//number of fishes which are aerial
-  int amphibian_aerial_no;//number of fishes which are not aerial
-  int amphibian_leg_no;//number of fishes which do not have legs
-  int amphibian_leg_yes;//number of fishes which has legs
-  int amphibian_hibernates_yes;//number of fishes which do not hibernate
-  int amphibian_hibernates_no;//number of fishes which  hibernate
+  int amphibian_aquatic_no;//number of amphibians which are not aquatic
+  int amphibian_aerial_yes;//number of amphibians which are aerial
+  int amphibian_aerial_no;//number of amphibians which are not aerial
+  int amphibian_leg_no;//number of amphibians which do not have legs
+  int amphibian_leg_yes;//number of amphibians which has legs
+  int amphibian_hibernates_yes;//number of amphibians which do not hibernate
+  int amphibian_hibernates_no;//number of amphibians which  hibernate
   
   
 };
-class fish : public animals
-// we define a class named fish which is publically inherited from the class animals which contains the data records and the functions which can be performed on the available data set and also functions and data define in the class animals are also available
+class bird : public animals
+// we define a class named bird which is publically inherited from the class animals which contains the data records and the functions which can be performed on the available data set and also functions and data define in the class animals are also available
 {
  public:
-  int fish_cold_count;//number of cold blooded fishes
-  int fish_warm_count;//number of wram blooded fishes
-  int fish_birth_yes;//number of fishes which gives birth
-  int fish_birth_no;//number of fishes which doesen't give birth
-  int fish_aquatic_yes;//number of fishes which are aquatic
-  int fish_aquatic_no;//number of fishes which are not aquatic
-  int fish_aerial_yes;//number of fishes which are aerial
-  int fish_aerial_no;//number of fishes which are not aerial
-  int fish_leg_no;//number of fishes which do not have legs
-  int fish_leg_yes;//number of fishes which has legs
-  int fish_hibernates_yes;//number of fishes which do not hibernate
-  int fish_hibernates_no;//number of fishes which  hibernate
+  int bird_cold_count;//number of cold blooded birds
+  int bird_warm_count;//number of wram blooded birds
+  int bird_birth_yes;//number of birds which gives birth
+  int bird_birth_no;//number of birds which doesen't give birth
+  int bird_aquatic_yes;//number of birds which are aquatic
+  int bird_aquatic_no;//number of birds which are not aquatic
+  int bird_aerial_yes;//number of birds which are aerial
+  int bird_aerial_no;//number of birds which are not aerial
+  int bird_leg_no;//number of birds which do not have legs
+  int bird_leg_yes;//number of birds which has legs
+  int bird_hibernates_yes;//number of birds which do not hibernate
+  int bird_hibernates_no;//number of birds which  hibernate
   
   
 };
@@ -218,11 +218,118 @@ int main()
  //m.print(hibernates);
  m.print(m.label);
  mammals mam;
+/*here mam is an object of class mammals.we repeatedly call gini count function to get the values which are defined in the inherited class mammals which is inherite from class animals publically.These values are needed for the calculation of the gini index so that effecient splitting can be performed
+*/
  mam.mammal_warm_count=0;
  mam.mammal_cold_count=0;
  mam.mammal_warm_count=m.gini_count(m.body_temperature,m.label,mam.mammal_warm_count,1,"mammal");
  mam.mammal_cold_count=m.gini_count(m.body_temperature,m.label,mam.mammal_cold_count,0,"mammal");
- cout<<mam.mammal_warm_count<<"  ";
- cout<<mam.mammal_cold_count;
+ mam.mammal_birth_yes=0;
+ mam.mammal_birth_no=0;
+ mam.mammal_birth_yes=m.gini_count(m.gives_birth,m.label,mam.mammal_birth_yes,1,"mammal");
+ mam.mammal_birth_no=m.gini_count(m.gives_birth,m.label,mam.mammal_birth_no,0,"mammal");
+ mam.mammal_aquatic_yes=0;
+ mam.mammal_aquatic_no=0;
+ mam.mammal_aquatic_yes=m.gini_count(m.aquatic,m.label,mam.mammal_aquatic_yes,1,"mammal");
+ mam.mammal_aquatic_no=m.gini_count(m.aquatic,m.label,mam.mammal_aquatic_no,0,"mammal");
+ mam.mammal_aerial_yes=0;
+ mam.mammal_aerial_no=0;
+ mam.mammal_aerial_yes=m.gini_count(m.aerial,m.label,mam.mammal_aerial_yes,1,"mammal");
+ mam.mammal_aerial_no=m.gini_count(m.aerial,m.label,mam.mammal_aerial_no,0,"mammal");
+ mam.mammal_leg_yes=0;
+ mam.mammal_leg_no=0;
+ mam.mammal_leg_yes=m.gini_count(m.legs,m.label,mam.mammal_leg_yes,1,"mammal");
+ mam.mammal_leg_no=m.gini_count(m.legs,m.label,mam.mammal_leg_no,0,"mammal");
+ mam.mammal_hibernates_yes=0;
+ mam.mammal_hibernates_no=0;
+ mam.mammal_hibernates_yes=m.gini_count(m.hibernates,m.label,mam.mammal_hibernates_yes,1,"mammal");
+ mam.mammal_hibernates_no=m.gini_count(m.hibernates,m.label,mam.mammal_hibernates_no,0,"mammal");
+ 
+
+ fish fis;
+/*here rep is an object of class reptiles.we repeatedly call gini count function to get the values which are defined in the inherited class reptiles which is inherite from class animals publically.These values are needed for the calculation of the gini index so that effecient splitting can be performed
+*/
+ fis.fish_warm_count=0;
+ fis.fish_cold_count=0;
+ fis.fish_warm_count=m.gini_count(m.body_temperature,m.label,fis.fish_warm_count,1,"fish");
+ fis.fish_cold_count=m.gini_count(m.body_temperature,m.label,fis.fish_cold_count,0,"fish");
+ fis.fish_birth_yes=0;
+ fis.fish_birth_no=0;
+ fis.fish_birth_yes=m.gini_count(m.gives_birth,m.label,fis.fish_birth_yes,1,"fish");
+ fis.fish_birth_no=m.gini_count(m.gives_birth,m.label,fis.fish_birth_no,0,"fish");
+ fis.fish_aquatic_yes=0;
+ fis.fish_aquatic_no=0;
+ fis.fish_aquatic_yes=m.gini_count(m.aquatic,m.label,fis.fish_aquatic_yes,1,"fish");
+ fis.fish_aquatic_no=m.gini_count(m.aquatic,m.label,fis.fish_aquatic_no,0,"fish");
+ fis.fish_aerial_yes=0;
+ fis.fish_aerial_no=0;
+ fis.fish_aerial_yes=m.gini_count(m.aerial,m.label,fis.fish_aerial_yes,1,"fish");
+ fis.fish_aerial_no=m.gini_count(m.aerial,m.label,fis.fish_aerial_no,0,"fish");
+ fis.fish_leg_yes=0;
+ fis.fish_leg_no=0;
+ fis.fish_leg_yes=m.gini_count(m.legs,m.label,fis.fish_leg_yes,1,"fish");
+ fis.fish_leg_no=m.gini_count(m.legs,m.label,fis.fish_leg_no,0,"fish");
+ fis.fish_hibernates_yes=0;
+ fis.fish_hibernates_no=0;
+ fis.fish_hibernates_yes=m.gini_count(m.hibernates,m.label,fis.fish_hibernates_yes,1,"fish");
+ fis.fish_hibernates_no=m.gini_count(m.hibernates,m.label,fis.fish_hibernates_no,0,"fish");
+ cout<<fis.fish_birth_yes<<"  "<<fis.fish_birth_no;
+
+reptiles rep;
+/*here rep is an object of class reptiles.we repeatedly call gini count function to get the values which are defined in the inherited class reptiles which is inherite from class animals publically.These values are needed for the calculation of the gini index so that effecient splitting can be performed
+*/
+ rep.reptile_warm_count=0;
+ rep.reptile_cold_count=0;
+ rep.reptile_warm_count=m.gini_count(m.body_temperature,m.label,rep.reptile_warm_count,1,"reptile");
+ rep.reptile_cold_count=m.gini_count(m.body_temperature,m.label,rep.reptile_cold_count,0,"reptile");
+ rep.reptile_birth_yes=0;
+ rep.reptile_birth_no=0;
+ rep.reptile_birth_yes=m.gini_count(m.gives_birth,m.label,rep.reptile_birth_yes,1,"reptile");
+ rep.reptile_birth_no=m.gini_count(m.gives_birth,m.label,rep.reptile_birth_no,0,"reptile");
+ rep.reptile_aquatic_yes=0;
+ rep.reptile_aquatic_no=0;
+ rep.reptile_aquatic_yes=m.gini_count(m.aquatic,m.label,rep.reptile_aquatic_yes,1,"reptile");
+ rep.reptile_aquatic_no=m.gini_count(m.aquatic,m.label,rep.reptile_aquatic_no,0,"reptile");
+ rep.reptile_aerial_yes=0;
+ rep.reptile_aerial_no=0;
+ rep.reptile_aerial_yes=m.gini_count(m.aerial,m.label,rep.reptile_aerial_yes,1,"reptile");
+ rep.reptile_aerial_no=m.gini_count(m.aerial,m.label,rep.reptile_aerial_no,0,"reptile");
+ rep.reptile_leg_yes=0;
+ rep.reptile_leg_no=0;
+ rep.reptile_leg_yes=m.gini_count(m.legs,m.label,rep.reptile_leg_yes,1,"reptile");
+ rep.reptile_leg_no=m.gini_count(m.legs,m.label,rep.reptile_leg_no,0,"reptile");
+ rep.reptile_hibernates_yes=0;
+ rep.reptile_hibernates_no=0;
+ rep.reptile_hibernates_yes=m.gini_count(m.hibernates,m.label,rep.reptile_hibernates_yes,1,"reptile");
+ rep.reptile_hibernates_no=m.gini_count(m.hibernates,m.label,rep.reptile_hibernates_no,0,"reptile");
+
+ fish fis;
+/*here rep is an object of class reptiles.we repeatedly call gini count function to get the values which are defined in the inherited class reptiles which is inherite from class animals publically.These values are needed for the calculation of the gini index so that effecient splitting can be performed
+*/
+ fis.fish_warm_count=0;
+ fis.fish_cold_count=0;
+ fis.fish_warm_count=m.gini_count(m.body_temperature,m.label,fis.fish_warm_count,1,"fish");
+ fis.fish_cold_count=m.gini_count(m.body_temperature,m.label,fis.fish_cold_count,0,"fish");
+ fis.fish_birth_yes=0;
+ fis.fish_birth_no=0;
+ fis.fish_birth_yes=m.gini_count(m.gives_birth,m.label,fis.fish_birth_yes,1,"fish");
+ fis.fish_birth_no=m.gini_count(m.gives_birth,m.label,fis.fish_birth_no,0,"fish");
+ fis.fish_aquatic_yes=0;
+ fis.fish_aquatic_no=0;
+ fis.fish_aquatic_yes=m.gini_count(m.aquatic,m.label,fis.fish_aquatic_yes,1,"fish");
+ fis.fish_aquatic_no=m.gini_count(m.aquatic,m.label,fis.fish_aquatic_no,0,"fish");
+ fis.fish_aerial_yes=0;
+ fis.fish_aerial_no=0;
+ fis.fish_aerial_yes=m.gini_count(m.aerial,m.label,fis.fish_aerial_yes,1,"fish");
+ fis.fish_aerial_no=m.gini_count(m.aerial,m.label,fis.fish_aerial_no,0,"fish");
+ fis.fish_leg_yes=0;
+ fis.fish_leg_no=0;
+ fis.fish_leg_yes=m.gini_count(m.legs,m.label,fis.fish_leg_yes,1,"fish");
+ fis.fish_leg_no=m.gini_count(m.legs,m.label,fis.fish_leg_no,0,"fish");
+ fis.fish_hibernates_yes=0;
+ fis.fish_hibernates_no=0;
+ fis.fish_hibernates_yes=m.gini_count(m.hibernates,m.label,fis.fish_hibernates_yes,1,"fish");
+ fis.fish_hibernates_no=m.gini_count(m.hibernates,m.label,fis.fish_hibernates_no,0,"fish");
+ cout<<fis.fish_birth_yes<<"  "<<fis.fish_birth_no;
  return(0); 
 }
