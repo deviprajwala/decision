@@ -3,7 +3,7 @@
 #include<string> //string is included so that we can make use of it which is in standard library.
 #include<vector>
 #include<set>
-
+#include<stdlib.h>
 using namespace std;
  
 typedef map<int, string> maps; //we are assigning an alternate name for the existing data type map.
@@ -12,7 +12,8 @@ string value;//in the map data type we are taking string data type as the value.
 int numb;
 int n;//n is the number of data points which are present in the data set.
 int label_num;//label_num is the number of class_labels which are present in the data set.
-int record_num=8;
+int attribute_num;
+string attribut[10];
 string s[10];
 float a1,a2,b1,b2,c1,c2,d1,d2,e1,e2;
 float gini;
@@ -26,13 +27,20 @@ struct node
  struct node *rchild;
  int condition_id;
 };
-typedef struct node *node;
+
+
+struct data_record
+{
+  map <int, int> body_temperature,gives_birth,aquatic,aerial,legs,hibernates;
+  maps name,label;
+};
+typedef struct node node;
 
 node getnode()
 {
-  node x;
-  x=(node)malloc(sizeof(struct node));
-  return x;
+  node *x;
+  x=(node *)malloc(sizeof(node));
+  return *x;
 }
 
 class animals
@@ -41,10 +49,8 @@ class animals
   public:
           set< string> attribute;
           int id;
-          map <int, int> body_temperature,gives_birth,aquatic,aerial,legs,hibernates;
-          maps name,label;
-          map<int,map> data_record(8);
-        
+          struct data_record data;
+          
   //we declare the variables name,body_temperature.. of the type maps.
   public:
          void set_init();
@@ -58,9 +64,9 @@ class animals
          float gini_count3();
          int square(int a);
          int get_best_split();
-         int stopping condition();
-         
-         
+         int stopping_condition();
+         struct data_record split_record(int i,int attribute,struct data_record data);
+         map<int,int>splitting(map <int,int>&m1,map<int,string>&m2,string check);
 };
 
 
@@ -68,7 +74,7 @@ void animals::set_init()
 {
    for(int i=1;i<=label_num;i++)
    {
-      attribute.insert(s[i]);
+      attribute.insert(attribut[i]);
    }
    /*for(set<string>::iterator it=attribute.begin();it!=attribute.end();it++)
    {
@@ -229,13 +235,13 @@ int animals::get_best_split()
  vector<float> v(6);
  int i=1;
  float min;
- int key=1;
- v[i++]=gini_count2(body_temperature,label);
- v[i++]=gini_count2(gives_birth,label);
- v[i++]=gini_count2(aquatic,label);
- v[i++]=gini_count2(aerial,label);
- v[i++]=gini_count2(legs,label);
- v[i]=gini_count2(hibernates,label);
+ int attribute=1;
+ v[i++]=gini_count2(data.body_temperature,data.label);
+ v[i++]=gini_count2(data.gives_birth,data.label);
+ v[i++]=gini_count2(data.aquatic,data.label);
+ v[i++]=gini_count2(data.aerial,data.label);
+ v[i++]=gini_count2(data.legs,data.label);
+ v[i]=gini_count2(data.hibernates,data.label);
  
  min=v[1];
  for(int i=2;i<v.size();i++)
@@ -243,33 +249,33 @@ int animals::get_best_split()
     if(v.at(i)<min)
     {
       min=v.at(i);
-      key=i;
+      attribute=i;
     } 
  }
- cout<<min<<"  "<<key;
- return key;
+ return attribute;
 }
 
-/*node tree_growth(set<string>attribute)
+/*node tree_growth(set<string>attribute,struct data)
 {
-   node head_left,head_right;
-   node rooot,right_child,left_child;
+   struct data_record left_record,right_record;
+   *node rooot,right_child,left_child;
+   int attribute;
 
    s=stopping_condition();//function to check the stopping conition
    if(s->stopping==1)//if the stopping condition is met i.e all data points have same label
    {
-     node leaf;
+     node *leaf;
      leaf=getnode();
-     strcpy(leaf->label,s->label);//leaf node is created and label is assigned
-     return leaf;
+     strcpy(leaf->label,s->data.label);//leaf node is created and label is assigned
+     return *leaf;
    }
    else
    {
    
-   rooot=getnode();
+   *root=getnode();
    v=find_best_split(head);// v is the condition id which is returned by best split function
-   head_left=split_record(1,v,head);//spilt the the records which satisfies the condition
-   head_right=split_record(0,v,head);//spilt the the records which does not satisfy the condition
+   left_record=split_record(1,v,data);//spilt the the records which satisfies the condition
+   right_record=split_record(0,v,data);//spilt the the records which does not satisfy the condition
    right_child=tree_growth(head_right);//check foe further growth in child nodes
    left_child=tree_growth(head_left);
    rooot->rchild=right_child;//assign the child nodes to the root
@@ -278,11 +284,11 @@ int animals::get_best_split()
 return rooot;
 }
 */
-int animals::stopping condition()
+int animals::stopping_condition()
 {
-  map<int,string>::iterator it2=label.begin();
+  map<int,string>::iterator it2=data.label.begin();
   string test=(*it2).second;
-  for(map<int,string>::iterator it2=label.begin();it2!=label.end();it2++)
+  for(map<int,string>::iterator it2=data.label.begin();it2!=data.label.end();it2++)
   {
       if(test!=(*it2).second)
       {
@@ -291,22 +297,56 @@ int animals::stopping condition()
   }
   return 1;
 }
+struct data_record animals::split_record(int i,int attribute,struct data_record data)
+{
+   string check;
+   if(attribute==i)
+   {
+     check=attribut[i];
+   }
+   cout<<check;
+   struct data_record required_data;
+   required_data.body_temperature=splitting(data.body_temperature,data.label,check);
+
+  return required_data;
+}
+map<int,int> animals :: splitting(map <int,int>&m1,map<int,string>&m2,string check)
+{
+   int key[15],k=1;
+   if(check==atribut[1])
+   {
+   for(map<int,int>::iterator it=data.body_temperature.begin();it!=data.body_temperature.end();it++)
+    {
+      if((*it).second==i)
+      {
+          key[k]=(*it).first;
+         //required_data.label.insert(std::pair<string,int>((*it2).first,(*it2).second);
+      }
+    }
+   }
+ for(i=1;i<=15;i++)
+ {
+   cout<<k[i];
+ }
+ return m1;
+}
+
 int main()
 {
  string str;
- cout<<"enter the value of n";
+ //cout<<"enter the value of n";
  //here n is the number of data points which are present in the data set.
  cin>>n;
  animals m;
- m.input(n,m.name);
- m.input(n,m.body_temperature);
- m.input(n,m.gives_birth);
- m.input(n,m.aquatic);
- m.input(n,m.aerial);
- m.input(n,m.legs);
- m.input(n,m.hibernates);
- m.input(n,m.label);
- m.print(m.name);
+ m.input(n,m.data.name);
+ m.input(n,m.data.body_temperature);
+ m.input(n,m.data.gives_birth);
+ m.input(n,m.data.aquatic);
+ m.input(n,m.data.aerial);
+ m.input(n,m.data.legs);
+ m.input(n,m.data.hibernates);
+ m.input(n,m.data.label);
+ m.print(m.data.name);
  //m.print(body_temperature);
  //m.print(gives_birth);
  //m.print(aquatic);
@@ -322,14 +362,19 @@ int main()
    s[j]=str;
   }
  m.set_init();
- mammals mam;
+ cin>>attribute_num;
+ for(int i=1;i<=attribute_num;i++)
+ {
+   cin>>str;
+   attribut[i]=str;
+  }
+ //mammals mam;
 /*here mam is an object of class mammals.we repeatedly call gini count function to get the values which are defined in the inherited class mammals which is inherite from class animals publically.These values are needed for the calculation of the gini index so that effecient splitting can be performed
 */
- reptiles rep;
- gini=m.get_best_split();
- 
-
-
- 
+ //attribute=m.get_best_split();
+ /*struct data_record si;
+ si=m.split_record(1,1,m.data);*/
+ struct data_record required_data;
+ required_data.body_temperature=m.splitting(m.data.body_temperature,m.data.label,body_temperature);
  return(0); 
 }
