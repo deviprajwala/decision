@@ -1,7 +1,8 @@
 #include<iostream>
 #include<map>     //map is included so that we can make use of it which is in standard library.
 #include<string> //string is included so that we can make use of it which is in standard library.
-
+#include<vector>
+#include<set>
 
 using namespace std;
  
@@ -11,19 +12,42 @@ string value;//in the map data type we are taking string data type as the value.
 int numb;
 int n;//n is the number of data points which are present in the data set.
 int label_num;//label_num is the number of class_labels which are present in the data set.
+int record_num=8;
 string s[10];
 float a1,a2,b1,b2,c1,c2,d1,d2,e1,e2;
+float gini;
+
+
+struct node
+{
+ char test_condition[10];
+ char label[10];
+ struct node *lchild;
+ struct node *rchild;
+ int condition_id;
+};
+typedef struct node *node;
+
+node getnode()
+{
+  node x;
+  x=(node)malloc(sizeof(struct node));
+  return x;
+}
 
 class animals
 // we define a class named animals which contains the data records and the functions which can be performed on the available data set
 {
   public:
-       
-        int id;
-        map <int, int> body_temperature,gives_birth,aquatic,aerial,legs,hibernates;
-        maps name,label;
+          set< string> attribute;
+          int id;
+          map <int, int> body_temperature,gives_birth,aquatic,aerial,legs,hibernates;
+          maps name,label;
+          map<int,map> data_record(8);
+        
   //we declare the variables name,body_temperature.. of the type maps.
   public:
+         void set_init();
          void input(int n,map<int, string> &mapn);
          void input(int n,map<int, int> &mapn);
          //it is an input function to read the values into the map for the further reference
@@ -33,44 +57,25 @@ class animals
          float gini_count2(map <int,int>&m1,map<int,string>&m2);
          float gini_count3();
          int square(int a);
+         int get_best_split();
+         int stopping condition();
          
          
 };
 
-class mammals : public animals
-// we define a class named mammals which is publically inherited from the class animals which contains the data records and the functions which can be performed on the available data set and also functions and data define in the class animals are also available
+
+void animals::set_init()
 {
- public:
-  
-  
-};
-class reptiles : public animals
-// we define a class named reptiles which is publically inherited from the class animals which contains the data records and the functions which can be performed on the available data set and also functions and data define in the class animals are also available
-{
- public:
-  
-  
-};
-class fish : public animals
-// we define a class named fish which is publically inherited from the class animals which contains the data records and the functions which can be performed on the available data set and also functions and data define in the class animals are also available
-{
- public:
-  
-  
-  
-};
-class amphibian : public animals
-// we define a class named amphibian which is publically inherited from the class animals which contains the data records and the functions which can be performed on the available data set and also functions and data define in the class animals are also available
-{
- public:
-  
-  
-};
-class bird : public animals
-// we define a class named bird which is publically inherited from the class animals which contains the data records and the functions which can be performed on the available data set and also functions and data define in the class animals are also available
-{
- 
-};
+   for(int i=1;i<=label_num;i++)
+   {
+      attribute.insert(s[i]);
+   }
+   /*for(set<string>::iterator it=attribute.begin();it!=attribute.end();it++)
+   {
+     cout<<(*it)<<"  ";
+   }
+   */
+}
 void animals::input(int n,map<int,string>&mapn)
 //this is the definition of the function which is present in the class animals for reading the input data set into the map
 {
@@ -210,7 +215,6 @@ float animals::gini_count3()
   
  
   gini=((yes_total/total)*v1)+((no_total/total)*v2);
-  cout<<gini;
   return gini;
   
 }
@@ -218,6 +222,74 @@ float animals::gini_count3()
 int animals::square(int a)
 {
    return a*a;
+}
+
+int animals::get_best_split()
+{
+ vector<float> v(6);
+ int i=1;
+ float min;
+ int key=1;
+ v[i++]=gini_count2(body_temperature,label);
+ v[i++]=gini_count2(gives_birth,label);
+ v[i++]=gini_count2(aquatic,label);
+ v[i++]=gini_count2(aerial,label);
+ v[i++]=gini_count2(legs,label);
+ v[i]=gini_count2(hibernates,label);
+ 
+ min=v[1];
+ for(int i=2;i<v.size();i++)
+ {
+    if(v.at(i)<min)
+    {
+      min=v.at(i);
+      key=i;
+    } 
+ }
+ cout<<min<<"  "<<key;
+ return key;
+}
+
+/*node tree_growth(set<string>attribute)
+{
+   node head_left,head_right;
+   node rooot,right_child,left_child;
+
+   s=stopping_condition();//function to check the stopping conition
+   if(s->stopping==1)//if the stopping condition is met i.e all data points have same label
+   {
+     node leaf;
+     leaf=getnode();
+     strcpy(leaf->label,s->label);//leaf node is created and label is assigned
+     return leaf;
+   }
+   else
+   {
+   
+   rooot=getnode();
+   v=find_best_split(head);// v is the condition id which is returned by best split function
+   head_left=split_record(1,v,head);//spilt the the records which satisfies the condition
+   head_right=split_record(0,v,head);//spilt the the records which does not satisfy the condition
+   right_child=tree_growth(head_right);//check foe further growth in child nodes
+   left_child=tree_growth(head_left);
+   rooot->rchild=right_child;//assign the child nodes to the root
+   rooot->lchild=left_child;
+   }
+return rooot;
+}
+*/
+int animals::stopping condition()
+{
+  map<int,string>::iterator it2=label.begin();
+  string test=(*it2).second;
+  for(map<int,string>::iterator it2=label.begin();it2!=label.end();it2++)
+  {
+      if(test!=(*it2).second)
+      {
+        return -1;//false
+      }       
+  }
+  return 1;
 }
 int main()
 {
@@ -241,19 +313,23 @@ int main()
  //m.print(aerial);
  //m.print(legs);
  //m.print(hibernates);
- m.print(m.label);
+ //m.print(m.label);
+ 
  cin>>label_num;
- for(int i=1;i<=label_num;i++)
+ for(int j=1;j<=label_num;j++)
  {
    cin>>str;
-   s[i]=str;
+   s[j]=str;
   }
+ m.set_init();
  mammals mam;
 /*here mam is an object of class mammals.we repeatedly call gini count function to get the values which are defined in the inherited class mammals which is inherite from class animals publically.These values are needed for the calculation of the gini index so that effecient splitting can be performed
 */
  reptiles rep;
- gini=mam.gini_count2(m.body_temperature,m.label);
- gini=mam.gini_count2(m.gives_birth,m.label);
- gini=mam.gini_count2(m.aquatic,m.label);
+ gini=m.get_best_split();
+ 
+
+
+ 
  return(0); 
 }
