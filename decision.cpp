@@ -4,6 +4,8 @@
 #include<vector>//vector is included so that we can make use of it which is in standard library.
 #include<set> //set is included so that we can make use of it which is in standard library.
 #include<stdlib.h>
+
+
 using namespace std;
  
 typedef map<int, string> maps; //we are assigning an alternate name for the existing data type map.
@@ -13,7 +15,7 @@ int numb;
 int n;//n is the number of data points which are present in the data set.
 int label_num;//label_num is the number of class_labels which are present in the data set.
 int attribute_num;//attribute_num is the number of attributes which are present in the data set.
-//string attribut[10];//array of strings which contain the names of the attributes.
+string atribute[10];//array of strings which contain the names of the attributes.
 string labe[10];//array of labels which contain the names of the attributes.
 float a1,a2,b1,b2,c1,c2,d1,d2,e1,e2;//these values are needed for the calculation of gini index
 float gini;//it holds the calculated value of gini index 
@@ -55,7 +57,8 @@ class animals
 // we define a class named animals which contains the data records and the functions which can be performed on the available data set
 {
   public:
-          vector<string> attribut;//array of strings which are the names of the attributes.
+          std::vector <string> attribut;//array of strings which are the names of the attributes.
+          
           struct data_record data;//structure in which the data records are present
           
  
@@ -572,7 +575,7 @@ int main()
 {
  node *root;
  string str;
- cout<<"enter the value of n";
+ //cout<<"enter the value of n";
  //here n is the number of data points which are present in the data set.
  cin>>n;
  animals m;
@@ -603,12 +606,19 @@ int main()
  cin>>attribute_num;
  for(int i=1;i<=attribute_num;i++)
  {
-   cout<<"huuuu";
    cin>>str;
-   m.attribut.insert(1,str);
-   //cout<<m.attribut[i]<<"  "<<i;
+   atribute[i]=str;
+   //cout<<atribute[i]<<"  "<<i;
   }
-  
+
+  m.attribut.push_back(" ");
+  m.attribut.push_back("body_temperature");
+  m.attribut.push_back("gives_birth");
+  m.attribut.push_back("aquatic");
+  m.attribut.push_back("aerial");
+  m.attribut.push_back("hibernates");
+  //cout<<m.attribut.at(5);
+
   root=getnode();
   
   root=m.tree_growth(m.attribut,m.data);
