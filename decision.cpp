@@ -92,8 +92,8 @@ class animals
          //here  the data record is splitted as per the attribute test condition so that further 
          //checking can be done to split further or make it as a leaf node.
 
-         map<int,int>splitting(map <int,int>&m1,map<int,string>&m2,string check,int i);
-         map<int,int>get_key_similar(map <int,int>&m1,int key[15],int k);
+         struct data_record splitting(map <int,int>&m1,map<int,string>&m2,string check,int i);
+         map<T1,T2>get_key_similar(map <T1,T2>&m1,int key[15],int k);
 };
 
 
@@ -359,56 +359,57 @@ struct data_record animals::split_record(int i,int attribute,struct data_record 
    {
      check=attribut[1];
    }
-   required_data.body_temperature=splitting(data.body_temperature,data.label,check,i);
+   required_data=splitting(data.body_temperature,data.label,check,i);
+   
 
    //based on gini index if attribute 2 has best split then splitting is done based on that attribute
    if(attribute==2)
    {
      check=attribut[2];
    }
-   required_data.body_temperature=splitting(data.gives_birth,data.label,check,i);
+   required_data=splitting(data.gives_birth,data.label,check,i);
 
    //based on gini index if attribute 3 has best split then splitting is done based on that attribute
    if(attribute==3)
    {
      check=attribut[3];
    }
-   required_data.body_temperature=splitting(data.aquatic,data.label,check,i);
+   required_data=splitting(data.aquatic,data.label,check,i);
 
    //based on gini index if attribute 4 has best split then splitting is done based on that attribute
    if(attribute==4)
    {
      check=attribut[4];
    }
-   required_data.body_temperature=splitting(data.aerial,data.label,check,i);
+   required_data=splitting(data.aerial,data.label,check,i);
 
    //based on gini index if attribute 5 has best split then splitting is done based on that attribute
    if(attribute==5)
    {
      check=attribut[5];
    }
-   required_data.body_temperature=splitting(data.legs,data.label,check,i);
+   required_data=splitting(data.legs,data.label,check,i);
 
    //based on gini index if attribute 6 has best split then splitting is done based on that attribute
    if(attribute==6)
    {
      check=attribut[6];
    }
-   required_data.body_temperature=splitting(data.hibernates,data.label,check,i);
+   required_data=splitting(data.hibernates,data.label,check,i);
 
   return required_data;
   //the structure data which contains the records after splitting is returned
 }
 
 
-map<int,int> animals :: splitting(map <int,int>&m1,map<int,string>&m2,string check,int i)
+struct data_record animals :: splitting(map <int,int>&m1,map<int,string>&m2,string check,int i)
 {
-   struct required_data;
+   struct data_record required_data;
    int key[15],k=1;
    map<int,int> body_temperature;
    if(check==attribut[1])
    {
-   for(map<int,int>::iterator it=data.body_temperature.begin();it!=data.body_temperature.end();it++)
+   for(map<int,int>::iterator it=m1.begin();it!=m1.end();it++)
     {
       if((*it).second==i)
       {
@@ -417,18 +418,24 @@ map<int,int> animals :: splitting(map <int,int>&m1,map<int,string>&m2,string che
       }
     }
    }
-   body_temperature=get_key_similar(data.body_temperature,key,k);
-   
- 
- return body_temperature;
+   required_data.body_temperature=get_key_similar<int,int>(data.body_temperature,key,k);
+   required_data.gives_birth=get_key_similar(data.gives_birth<int,int>,key,k);
+   required_data.aquatic=get_key_similar(data.aquatic<int,int>,key,k);
+   required_data.aerial=get_key_similar(data.aerial<int,int>,key,k);
+   required_data.legs=get_key_similar(data.legs<int,int>,key,k);
+   required_data.hibernates=get_key_similar(data.hibernates<int,int>,key,k);
+
+ return required_data;
 }
-map<int,int> animals::get_key_similar(map <int,int>&m1,int key[15],int k)
+
+template<typename T1,typename T2>
+map<T1,T2> animals::get_key_similar(map <T1,T2>&m1,int key[15],int k)
 {
   int i=1,ke,v;
-  map<int,int> ret;
+  map<T1,T2> ret;
   label:
   {
-  for(map<int,int>::iterator it=m1.begin();it!=m1.end();it++)
+  for(map<T1,T2>::iterator it=m1.begin();it!=m1.end();it++)
     {
       if((*it).first==key[i])
       {
@@ -488,7 +495,11 @@ int main()
  //attribute=m.get_best_split();
  /*struct data_record si;
  si=m.split_record(1,1,m.data);*/
- struct data_record required_data;
- required_data.body_temperature=m.splitting(m.data.body_temperature,m.data.label,"body_temperature",1);
+ struct data_record r;
+ r=m.splitting(m.data.body_temperature,m.data.label,"body_temperature",1);
+ for(map<int,string>::iterator it=r.label.begin();it!=r.label.end();it++)
+ {
+   cout<<(*it).first<<"  "<<(*it).second<<"\n";
+ }
  return(0); 
 }
