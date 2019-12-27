@@ -36,16 +36,12 @@ struct data_record
   map <int, int> body_temperature,gives_birth,aquatic,aerial,legs,hibernates;
   maps name,label;
 };
-typedef struct node node;
 
-node getnode()
-//function which allocates space for the node.
+struct retur
 {
-  node *x;
-  x=(node *)malloc(sizeof(node));
-  return *x;
-}
-
+  string label;
+  int id;
+};
 class animals
 // we define a class named animals which contains the data records and the functions which can be performed on the available data set
 {
@@ -55,6 +51,10 @@ class animals
           
  
   public:
+         node* tree_growth(set<string>attribute,struct data_record data);
+         //induction algorithm for the growth of the tree which performs the performance of the decision 
+         //tree.
+ 
          void set_init();//to initial lise the set with the names of attributes.
 
          void input(int n,map<int, string> &mapn);//function to read the data record.
@@ -84,19 +84,57 @@ class animals
          //in this function we get the gini index for each of the attribute by calling a function
          //gini_count2 and get the best attribute for splitting which is the one with least value 
 
-         int stopping_condition();
+         struct retur stopping_condition();
          //this function checks for the stopping condition which is satisfied if all the data points 
          //in the data set has the same label
 
          struct data_record split_record(int i,int attribute,struct data_record data);
          //here  the data record is splitted as per the attribute test condition so that further 
          //checking can be done to split further or make it as a leaf node.
+         
+         map<int,int>get_key_similar(map <int,int>&m1,int key[15],int k);
+         map<int,string>get_key_similar2(map <int,string>&m1,int key[15],int k);
+         //in this function we get an array of intergers which are the key values.Based on this key 
+         //values we split the data record and return it to the splitting function.The map regarding 
+         //each of the attribute is splitted and returned.
 
-         struct data_record splitting(map <int,int>&m1,map<int,string>&m2,string check,int i);
-         map<T1,T2>get_key_similar(map <T1,T2>&m1,int key[15],int k);
+         struct data_record splitting(map <int,int>&m1,int i);
+         //In this function we get the map of each of the attribute which are splitted as per the 
+         //requirement we combine all these maps to a structure data_record and return it to the
+         //  calling function.
+
+         
 };
 
-
+node* animals::tree_growth(set<string>attribute,struct data_record data)
+//induction algorithm for the growth of the tree which performs the performance of the decision tree.
+{
+   struct data_record left_record,right_record;
+   node* root,right_child,left_child;
+   int v;
+   struct retur s;
+   s=stopping_condition();//function to check the stopping conition
+   if(s.id==1)//if the stopping condition is met i.e all data points have same label
+   {
+     node* leaf;
+     //leaf=getnode();
+     strcpy(leaf->label,s.label);//leaf node is created and label is assigned
+     return leaf;
+   }
+   else
+   {
+   
+   //root=getnode();
+   v=get_best_split();// v is the condition id which is returned by best split function
+   left_record=split_record(1,v,data);//spilt the the records which satisfies the condition
+   right_record=split_record(0,v,data);//spilt the the records which does not satisfy the condition
+   right_child=tree_growth(attribute,right_record);//check foe further growth in child nodes
+   left_child=tree_growth(attribute,left_record);
+   root->rchild=right_child;//assign the child nodes to the root
+   root->lchild=left_child;
+   }
+return root;
+}
 void animals::set_init()
 {
    for(int i=1;i<=label_num;i++)
@@ -298,43 +336,18 @@ int animals::get_best_split()
  //the attribute with the least value is returned
 }
 
-/*node tree_growth(set<string>attribute,struct data)
-{
-   struct data_record left_record,right_record;
-   *node rooot,right_child,left_child;
-   int attribute;
 
-   s=stopping_condition();//function to check the stopping conition
-   if(s->stopping==1)//if the stopping condition is met i.e all data points have same label
-   {
-     node *leaf;
-     leaf=getnode();
-     strcpy(leaf->label,s->data.label);//leaf node is created and label is assigned
-     return *leaf;
-   }
-   else
-   {
-   
-   *root=getnode();
-   v=find_best_split(head);// v is the condition id which is returned by best split function
-   left_record=split_record(1,v,data);//spilt the the records which satisfies the condition
-   right_record=split_record(0,v,data);//spilt the the records which does not satisfy the condition
-   right_child=tree_growth(head_right);//check foe further growth in child nodes
-   left_child=tree_growth(head_left);
-   root->rchild=right_child;//assign the child nodes to the root
-   root->lchild=left_child;
-   }
-return root;
-}
-*/
-int animals::stopping_condition()
+
+struct retur animals::stopping_condition()
 //this function checks for the stopping condition which is satisfied if all the data points in the data
 //set has the same label
 {
+  struct retur r;
   map<int,string>::iterator it2=data.label.begin();
   //iterator it2 has the address of the first element in the map label which is present in the structure 
   //named data
   string test=(*it2).second;
+  r.label=test;
   //test contains the label of the first element of the map
   for(map<int,string>::iterator it2=data.label.begin();it2!=data.label.end();it2++)
   //map iterated with the help of iterator it2 and checked for equalities of the label if any of the 
@@ -342,10 +355,12 @@ int animals::stopping_condition()
   {
       if(test!=(*it2).second)
       {
-        return -1;//false
+        r.id=-1;
+        return r;//false
       }       
   }
-  return 1;
+  r.id=1;
+  return r;
   //if the stopping condition is satisfied then 1 is returned i.e all the labels are similar
 }
 struct data_record animals::split_record(int i,int attribute,struct data_record data)
@@ -359,7 +374,7 @@ struct data_record animals::split_record(int i,int attribute,struct data_record 
    {
      check=attribut[1];
    }
-   required_data=splitting(data.body_temperature,data.label,check,i);
+   required_data=splitting(data.body_temperature,i);
    
 
    //based on gini index if attribute 2 has best split then splitting is done based on that attribute
@@ -367,93 +382,153 @@ struct data_record animals::split_record(int i,int attribute,struct data_record 
    {
      check=attribut[2];
    }
-   required_data=splitting(data.gives_birth,data.label,check,i);
+   required_data=splitting(data.gives_birth,i);
 
    //based on gini index if attribute 3 has best split then splitting is done based on that attribute
    if(attribute==3)
    {
      check=attribut[3];
    }
-   required_data=splitting(data.aquatic,data.label,check,i);
+   required_data=splitting(data.aquatic,i);
 
    //based on gini index if attribute 4 has best split then splitting is done based on that attribute
    if(attribute==4)
    {
      check=attribut[4];
    }
-   required_data=splitting(data.aerial,data.label,check,i);
+   required_data=splitting(data.aerial,i);
 
    //based on gini index if attribute 5 has best split then splitting is done based on that attribute
    if(attribute==5)
    {
      check=attribut[5];
    }
-   required_data=splitting(data.legs,data.label,check,i);
+   required_data=splitting(data.legs,i);
 
    //based on gini index if attribute 6 has best split then splitting is done based on that attribute
    if(attribute==6)
    {
      check=attribut[6];
    }
-   required_data=splitting(data.hibernates,data.label,check,i);
+   required_data=splitting(data.hibernates,i);
 
   return required_data;
   //the structure data which contains the records after splitting is returned
 }
 
 
-struct data_record animals :: splitting(map <int,int>&m1,map<int,string>&m2,string check,int i)
-{
-   struct data_record required_data;
-   int key[15],k=1;
-   map<int,int> body_temperature;
-   if(check==attribut[1])
-   {
-   for(map<int,int>::iterator it=m1.begin();it!=m1.end();it++)
-    {
-      if((*it).second==i)
-      {
-          key[k]=(*it).first;
-          k++;
-      }
-    }
-   }
-   required_data.body_temperature=get_key_similar<int,int>(data.body_temperature,key,k);
-   required_data.gives_birth=get_key_similar(data.gives_birth<int,int>,key,k);
-   required_data.aquatic=get_key_similar(data.aquatic<int,int>,key,k);
-   required_data.aerial=get_key_similar(data.aerial<int,int>,key,k);
-   required_data.legs=get_key_similar(data.legs<int,int>,key,k);
-   required_data.hibernates=get_key_similar(data.hibernates<int,int>,key,k);
-
- return required_data;
-}
-
-template<typename T1,typename T2>
-map<T1,T2> animals::get_key_similar(map <T1,T2>&m1,int key[15],int k)
+map<int,int> animals::get_key_similar(map <int,int>&m1,int key[15],int k)
+//in this function we get an array of intergers which are the key values.Based on this key values we 
+//split the data record and return it to the splitting function.The map regarding each of the attribute 
+//is splitted and returned.The map contains intger both key as well as value.
 {
   int i=1,ke,v;
-  map<T1,T2> ret;
+  map<int,int> ret;
   label:
   {
-  for(map<T1,T2>::iterator it=m1.begin();it!=m1.end();it++)
+  for(map<int,int>::iterator it=m1.begin();it!=m1.end();it++)
+  //we iterate through the map which is sent as an argument
     {
       if((*it).first==key[i])
+      //if the elements of the array key are equal to the key value of the map which is sent as an 
+      //argument then that corresponding key-value pair is inserted inta a map which is returned later
       {
-          ke=key[i];
-          v=(*it).second;
+          ke=key[i];//key of the map which is an integer
+          v=(*it).second;//value of map which is an integer
           ret[ke]=v;
       }
     }
    }
     while(i!=k)
     {
-      i++;
+      i++;//the value of i is incremented so that all the values present in the array key are compared
+          //with the key values of the map
       goto label;
     }
   return ret;
 }
+
+map<int,string> animals::get_key_similar2(map <int,string>&m1,int key[15],int k)
+//in this function we get an array of intergers which are the key values.Based on this key values we 
+//split the data record and return it to the splitting function.The map regarding each of the attribute 
+//is splitted and returned.The is combination of string and integer.
+{
+  int i=1,ke;
+  string v;
+  map<int,string> ret;
+  label:
+  {
+  for(map<int,string>::iterator it=m1.begin();it!=m1.end();it++)
+  //we iterate through the map which is sent as an argument
+    {
+      if((*it).first==key[i])
+      //if the elements of the array key are equal to the key value of the map which is sent as an 
+      //argument then that corresponding key-value pair is inserted inta a map which is returned later
+      {
+          ke=key[i];//key of the map which is an integer
+          v=(*it).second;//value of map which is a string
+          ret[ke]=v;
+      }
+    }
+   }
+    while(i!=k)
+    {
+      i++;//the value of i is incremented so that all the values present in the array key are compared
+          //with the key values of the map
+      goto label;
+    }
+  return ret;
+}
+struct data_record animals :: splitting(map <int,int>&m1,int i)
+//In this function we get the map of each of the attribute which are splitted as per the requirement
+//we combine all these maps to a structure data_record and return it to the calling function.
+{
+   struct data_record required_data;
+   int key[15],k=1;
+   
+   for(map<int,int>::iterator it=m1.begin();it!=m1.end();it++)
+   //we iterate through the map which is sent as an argument
+    {
+      if((*it).second==i)
+      //we chech whether the condition "i" of attribute is satisfied or not.If the condition is met the
+      //key values of them are stored in an array
+      {
+          key[k]=(*it).first;
+          k++;
+      }
+    }
+  
+   required_data.body_temperature=get_key_similar(data.body_temperature,key,k);
+   //we get the map of body_temperature after splitting and is added to data_record
+
+   required_data.gives_birth=get_key_similar(data.gives_birth,key,k);
+   //we get the map of gives_birth after splitting and is added to data_record
+
+   required_data.aquatic=get_key_similar(data.aquatic,key,k);
+   //we get the map of aquatic after splitting and is added to data_record
+
+   required_data.aerial=get_key_similar(data.aerial,key,k);
+   //we get the map of aerial after splitting and is added to data_record
+
+   required_data.legs=get_key_similar(data.legs,key,k);
+   //we get the map of legs after splitting and is added to data_record
+
+   required_data.hibernates=get_key_similar(data.hibernates,key,k);
+   //we get the map of hibernates after splitting and is added to data_record
+
+   required_data.name=get_key_similar2(data.name,key,k);
+   //we get the map of name after splitting and is added to data_record
+
+   required_data.label=get_key_similar2(data.label,key,k);
+   //we get the map of label after splitting and is added to data_record
+
+ return required_data;
+}
+
+
 int main()
 {
+ node *root;
  string str;
  //cout<<"enter the value of n";
  //here n is the number of data points which are present in the data set.
@@ -489,17 +564,6 @@ int main()
    cin>>str;
    attribut[i]=str;
   }
- //mammals mam;
-/*here mam is an object of class mammals.we repeatedly call gini count function to get the values which are defined in the inherited class mammals which is inherite from class animals publically.These values are needed for the calculation of the gini index so that effecient splitting can be performed
-*/
- //attribute=m.get_best_split();
- /*struct data_record si;
- si=m.split_record(1,1,m.data);*/
- struct data_record r;
- r=m.splitting(m.data.body_temperature,m.data.label,"body_temperature",1);
- for(map<int,string>::iterator it=r.label.begin();it!=r.label.end();it++)
- {
-   cout<<(*it).first<<"  "<<(*it).second<<"\n";
- }
+ root=m.tree_growth(m.attribute,m.data);
  return(0); 
 }
