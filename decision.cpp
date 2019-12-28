@@ -8,14 +8,12 @@
 
 using namespace std;
  
-typedef map<int, string> maps; //we are assigning an alternate name for the existing data type map.
 int key;   //in the map data type we are taking integer data type as the key.
 string value;//in the map data type we are taking string data type as the value.
 int numb;
 int n;//n is the number of data points which are present in the data set.
 int label_num;//label_num is the number of class_labels which are present in the data set.
 int attribute_num;//attribute_num is the number of attributes which are present in the data set.
-string atribute[10];//array of strings which contain the names of the attributes.
 string labe[10];//array of labels which contain the names of the attributes.
 float a1,a2,b1,b2,c1,c2,d1,d2,e1,e2;//these values are needed for the calculation of gini index
 float gini;//it holds the calculated value of gini index 
@@ -36,7 +34,7 @@ struct data_record
 //here we define a structure named data record which contains all the map elements of the data records on which the necessary operations has to be performed.
 {
   map <int, int> body_temperature,gives_birth,aquatic,aerial,legs,hibernates;
-  maps name,label;
+  map <int,string> name,label;
 };
 
 
@@ -46,10 +44,9 @@ struct retur
   int id;
 };
 
-node* getnode()
+struct node* getnode()
 {
-  node *x;
-  x=(node*)malloc(sizeof(struct node));
+  node *x=(node*)malloc(sizeof(struct node));
   return x;
 }
 
@@ -57,13 +54,13 @@ class animals
 // we define a class named animals which contains the data records and the functions which can be performed on the available data set
 {
   public:
-          std::vector <string> attribut;//array of strings which are the names of the attributes.
           
+          string atribute[10];//array of strings which contain the names of the attributes.
           struct data_record data;//structure in which the data records are present
           
  
   public:
-         node* tree_growth(vector<string>attribut,struct data_record data);
+         struct node* tree_growth(string atribut[10],struct data_record data);
          //induction algorithm for the growth of the tree which performs the performance of the decision 
          //tree.
  
@@ -90,7 +87,7 @@ class animals
          int square(int a);
          //this function just squares a number and returns it.
 
-         int get_best_split(vector <string>attribut);
+         int get_best_split(string atribute[10]);
          //in this function we get the gini index for each of the attribute by calling a function
          //gini_count2 and get the best attribute for splitting which is the one with least value 
 
@@ -98,7 +95,7 @@ class animals
          //this function checks for the stopping condition which is satisfied if all the data points 
          //in the data set has the same label
 
-         struct data_record split_record(int i,int attri,struct data_record data,vector<string>attribut);
+         struct data_record split_record(int i,int attri,data_record data,string atribute[10]);
          //here  the data record is splitted as per the attribute test condition so that further 
          //checking can be done to split further or make it as a leaf node.
          
@@ -116,37 +113,39 @@ class animals
          
 };
 
-node* animals::tree_growth(vector<string> attribut,struct data_record data)
+struct node* animals::tree_growth(string atribute[10],struct data_record data)
 //induction algorithm for the growth of the tree which performs the performance of the decision tree.
 {
-   cout<<"b";
+  
    struct data_record left_record,right_record;
-   node *root,*right_child,*left_child;
+   struct node* root;
+   struct node* right_child;
+   struct node* left_child;
    int v;
-   struct retur s;
+   retur s;
    s=stopping_condition();//function to check the stopping conition
    if(s.id==1)//if the stopping condition is met i.e all data points have same label
    {
-     cout<<"           ";
-     node *leaf;
+
+     struct node* leaf;
      leaf=getnode();
      leaf->label=s.label;//leaf node is created and label is assigned
      return leaf;
    }
    else
    {
-   cout<<"c          ";
+
    right_child=getnode();
    left_child=getnode();
-   v=get_best_split(attribut);// v is the condition id which is returned by best split function
-   left_record=split_record(1,v,data,attribut);//spilt the the records which satisfies the condition
-   right_record=split_record(0,v,data,attribut);//spilt the the records which does not satisfy the condition
+   v=get_best_split(atribute);// v is the condition id which is returned by best split function
+   left_record=split_record(1,v,data,atribute);//spilt the the records which satisfies the condition
+   right_record=split_record(0,v,data,atribute);//spilt the the records which does not satisfy the condition
    
-   left_child=tree_growth(attribut,left_record);
-   right_child=tree_growth(attribut,right_record);//check foe further growth in child nodes
+   left_child=tree_growth(atribute,left_record);
+   right_child=tree_growth(atribute,right_record);//check foe further growth in child nodes
    
-   right_child->test_condition=attribut[v];
-   right_child->test_condition=attribut[v];
+   right_child->test_condition=atribute[v];
+   right_child->test_condition=atribute[v];
    root->rchild=right_child;//assign the child nodes to the root
    root->lchild=left_child;
    }
@@ -312,7 +311,7 @@ int animals::square(int a)
    return a*a;
 }
 
-int animals::get_best_split(vector <string>attribut)
+int animals::get_best_split(string atribute[10])
 //in this function we get the gini index for each of the attribute by calling a function gini_count2 and
 //get the best attribute for splitting which is the one with least value 
 {
@@ -321,45 +320,38 @@ int animals::get_best_split(vector <string>attribut)
  int i=1;
  float min;
  int attribute=1;
- vector<string>::iterator it=attribut.begin();
- if(*it!="null")
+ if(atribute[i]!="null")
    {
    v[i]=gini_count2(data.body_temperature,data.label);
-   *it++;
    }
  i++;
- if(*it!="null")
+ if(atribute[i]!="null")
    {
    v[i]=gini_count2(data.gives_birth,data.label);
-   *it++;
    }
  i++;
  v[i]=100;
- if(*it!="null")
+ if(atribute[i]!="null")
    {
    v[i++]=gini_count2(data.aquatic,data.label);
-   *it++;
    }
  i++;
  v[i]=100;
- if(*it!="null")
+ if(atribute[i]!="null")
    {
    v[i++]=gini_count2(data.aerial,data.label);
-   *it++;
    }
  i++;
  v[i]=100;
- if(*it!="null")
+ if(atribute[i]!="null")
    {
    v[i++]=gini_count2(data.legs,data.label);
-   *it++;
    }
  i++;
  v[i]=100;
- if(*it!="null")
+ if(atribute[i]!="null")
    {
    v[i]=gini_count2(data.hibernates,data.label);
-   *it++;
    }
  i++;
  v[i]=100;
@@ -372,6 +364,7 @@ int animals::get_best_split(vector <string>attribut)
       attribute=i;
     } 
  }
+ i=1;
  return attribute;
  //the attribute with the least value is returned
 }
@@ -382,7 +375,7 @@ struct retur animals::stopping_condition()
 //this function checks for the stopping condition which is satisfied if all the data points in the data
 //set has the same label
 {
-  struct retur r;
+  retur r;
   map<int,string>::iterator it2=data.label.begin();
   //iterator it2 has the address of the first element in the map label which is present in the structure 
   //named data
@@ -403,24 +396,24 @@ struct retur animals::stopping_condition()
   return r;
   //if the stopping condition is satisfied then 1 is returned i.e all the labels are similar
 }
-struct data_record animals::split_record(int i,int attri,struct data_record data,vector<string>attribut)
+struct data_record animals::split_record(int i,int attri,data_record data,string atribute[10])
 //here  the data record is splitted as per the attribute test condition so that further checking can be 
 //done to split further or make it as a leaf node
 {
-   struct data_record required_data;
+   data_record required_data;
    string check;
    
    //based on gini index if attribute 1 has best split then splitting is done based on that attribute
    if(attri==1)
    {
-     attribut[1]="null";
+     atribute[1]="null";
      required_data=splitting(data.body_temperature,i);
    }
    
    //based on gini index if attribute 2 has best split then splitting is done based on that attribute
    else if(attri==2)
    {
-     attribut[2]="null";
+     atribute[2]="null";
      required_data=splitting(data.gives_birth,i);
    }
    
@@ -428,7 +421,7 @@ struct data_record animals::split_record(int i,int attri,struct data_record data
    //based on gini index if attribute 3 has best split then splitting is done based on that attribute
    else if(attri==3)
    {
-     attribut[3]="null";
+     atribute[3]="null";
      required_data=splitting(data.aquatic,i);
    }
    
@@ -436,7 +429,7 @@ struct data_record animals::split_record(int i,int attri,struct data_record data
    //based on gini index if attribute 4 has best split then splitting is done based on that attribute
    else if(attri==4)
    {
-     attribut[4]="null";
+     atribute[4]="null";
      required_data=splitting(data.aerial,i);
    }
    
@@ -444,7 +437,7 @@ struct data_record animals::split_record(int i,int attri,struct data_record data
    //based on gini index if attribute 5 has best split then splitting is done based on that attribute
    else if(attri==5)
    {
-     attribut[5]="null";
+     atribute[5]="null";
      required_data=splitting(data.legs,i);
    }
    
@@ -452,7 +445,7 @@ struct data_record animals::split_record(int i,int attri,struct data_record data
    //based on gini index if attribute 6 has best split then splitting is done based on that attribute
    else if(attri==6)
    {
-     attribut[6]="null";
+     atribute[6]="null";
      required_data=splitting(data.hibernates,i);
    }
    
@@ -528,7 +521,7 @@ struct data_record animals :: splitting(map <int,int>&m1,int i)
 //In this function we get the map of each of the attribute which are splitted as per the requirement
 //we combine all these maps to a structure data_record and return it to the calling function.
 {
-   struct data_record required_data;
+   data_record required_data;
    int key[15],k=1;
    
    for(map<int,int>::iterator it=m1.begin();it!=m1.end();it++)
@@ -607,21 +600,14 @@ int main()
  for(int i=1;i<=attribute_num;i++)
  {
    cin>>str;
-   atribute[i]=str;
+   m.atribute[i]=str;
    //cout<<atribute[i]<<"  "<<i;
   }
 
-  m.attribut.push_back(" ");
-  m.attribut.push_back("body_temperature");
-  m.attribut.push_back("gives_birth");
-  m.attribut.push_back("aquatic");
-  m.attribut.push_back("aerial");
-  m.attribut.push_back("hibernates");
-  //cout<<m.attribut.at(5);
 
   root=getnode();
   
-  root=m.tree_growth(m.attribut,m.data);
+  root=m.tree_growth(m.atribute,m.data);
    /*struct data_record left_record;
    int v=m.get_best_split();// v is the condition id which is returned by best split function
    //cout<<v<<"h";
