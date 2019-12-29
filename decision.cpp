@@ -658,22 +658,40 @@ int main()
   rooti=newnode("start",100);
   rooti=m.tree_growth(m.atribute,m.data,rooti);
   }
-   /*struct data_record left_record;
-   int v=m.get_best_split();// v is the condition id which is returned by best split function
-   //cout<<v<<"h";
-   left_record=m.split_record(1,v,m.data);
-   for(map<int,string>::iterator it=left_record.name.begin();it!=left_record.name.end();it++)
-   {
-     cout<<(*it).first<<"  "<<(*it).second<<"\n";
-   }
-   */
+   
    //cout<<rooti->label;
    //cout<<rooti->lchild->label<<"  ";
    //cout<<rooti->lchild->lchild->label<<"   ";
    //cout<<rooti->lchild->lchild->class_label->label<<"   ";
    //cout<<rooti->lchild->rchild->class_label->label<<"   ";
-   //cout<<rooti->rchild->lchild->class_label->label<<"   ";
-   //cout<<rooti->rchild->rchild->rchild->class_label->label;
-   cout<<rooti->rchild->rchild->lchild->class_label->label;
+   //cout<<rooti->rchild->lchild->class_label->label<<"   ";//amphibian
+   //cout<<rooti->rchild->rchild->rchild->class_label->label;//reptile
+   //cout<<rooti->rchild->rchild->lchild->class_label->label;//fish
+   
+   cout<<"digraph G {"<<"\n";
+   cout<<rooti->label<<"->"<<rooti->lchild->label<<"yes"<<"\n";
+   cout<<rooti->label<<"->"<<rooti->rchild->label<<"no"<<"\n";
+   cout<<rooti->lchild->label<<"yes"<<"->"<<rooti->lchild->lchild->label<<"yes"<<"\n";
+   cout<<rooti->lchild->label<<"yes"<<"->"<<rooti->lchild->rchild->label<<"no"<<"\n";
+   cout<<rooti->lchild->lchild->label<<"yes"<<"->"<<rooti->lchild->lchild->class_label->label<<"\n";
+   cout<<rooti->lchild->lchild->label<<"no"<<"->"<<rooti->lchild->rchild->class_label->label<<"\n";
+
+   cout<<rooti->rchild->label<<"no"<<"->"<<rooti->rchild->lchild->label<<"yes"<<"\n";
+   cout<<rooti->rchild->label<<"no"<<"->"<<rooti->rchild->rchild->label<<"no"<<"\n";
+
+   cout<<rooti->rchild->lchild->label<<"yes"<<"->"<<rooti->rchild->lchild->class_label->label;
+   
+   cout<<"\n"<<rooti->rchild->rchild->label<<"no"<<"->";
+   cout<<rooti->rchild->rchild->lchild->label<<"yes";
+   cout<<"\n"<<rooti->rchild->rchild->label<<"no"<<"->";
+   cout<<rooti->rchild->rchild->lchild->label<<"no"<<"\n";
+   
+   cout<<rooti->rchild->rchild->lchild->label<<"no"<<"->";
+   cout<<rooti->rchild->rchild->lchild->class_label->label<<"\n";
+
+   cout<<rooti->rchild->rchild->lchild->label<<"yes"<<"->";
+   cout<<rooti->rchild->rchild->rchild->class_label->label<<"\n";
+   cout<<"}";
+   
  return(0); 
 }

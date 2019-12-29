@@ -1,0 +1,15 @@
+digraph G {
+start->body_temperatureyes
+start->body_temperatureno
+body_temperatureyes->gives_birthyes
+body_temperatureyes->gives_birthno
+gives_birthyes->mammal
+gives_birthno->bird
+body_temperatureno->legsyes
+body_temperatureno->legsno
+legsyes->amphibian
+legsno->aquaticyes
+legsno->aquaticno
+aquaticno->fish
+aquaticyes->reptile
+}
