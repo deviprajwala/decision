@@ -27,6 +27,8 @@ struct node
  int id;
  struct node *lchild;
  struct node *rchild;
+ struct node *parent;
+ struct node *class_label;
  int condition_id;
 };
 
@@ -54,8 +56,19 @@ struct node *newnode(string label,int i)
   return temp;
 }
 
+struct node *newnode1(string label,int i,struct node* root)
+{
+  struct node *temp =  new struct node();
+  temp->label = label;
+  temp->id=i;
+  temp->lchild = temp->rchild = NULL;
+  root->class_label=temp;
+  return temp;
+}
+
 struct node* insert(struct node* root,struct node* child,int id)
 {
+   struct node* par;
    //tree is empty,return a new node
   if (root == NULL) return root;
 
@@ -63,13 +76,15 @@ struct node* insert(struct node* root,struct node* child,int id)
   if (id==1)
   {
    root->lchild  = child;
+   child->parent=root;
   }
   else if(id==0)
   { 
   root->rchild = child;
+  child->parent=root;
   }
- 
-return root;
+  
+return child;
 //return the node pointer
 }
 
@@ -144,13 +159,15 @@ struct node* animals::tree_growth(string atribute[10],struct data_record data,st
    struct data_record left_record,right_record;
    struct node* right_child;
    struct node* left_child;
+   struct node* lpar;
+   struct node* rpar;
    int v;
    retur s;
    s=stopping_condition(data);//function to check the stopping conition
     if(s.id==1)//if the stopping condition is met i.e all data points have same label
     {
      struct node* leaf;
-     leaf = newnode(s.label,100);//leaf node is created and label is assigned
+     leaf = newnode1(s.label,100,root);//leaf node is created and label is assigned
      return leaf;
     }
     else
@@ -161,13 +178,12 @@ struct node* animals::tree_growth(string atribute[10],struct data_record data,st
                                                 //condition
      left_child=newnode(atributes[v],1);
      right_child=newnode(atributes[v],0);
-     root = insert(root,left_child,1);
-     root = insert(root,right_child,0);
+     lpar = insert(root,left_child,1);
+     rpar = insert(root,right_child,0);
 
-     left_child=tree_growth(atribute,left_record,root);
-     right_child=tree_growth(atribute,right_record,root);//check for further growth in child nodes
+     left_child=tree_growth(atribute,left_record,lpar);
+     right_child=tree_growth(atribute,right_record,rpar);//check for further growth in child nodes
     
-     
     }
    
   
@@ -651,6 +667,13 @@ int main()
      cout<<(*it).first<<"  "<<(*it).second<<"\n";
    }
    */
-   cout<<rooti->lchild->label;
+   //cout<<rooti->label;
+   //cout<<rooti->lchild->label<<"  ";
+   //cout<<rooti->lchild->lchild->label<<"   ";
+   //cout<<rooti->lchild->lchild->class_label->label<<"   ";
+   //cout<<rooti->lchild->rchild->class_label->label<<"   ";
+   //cout<<rooti->rchild->lchild->class_label->label<<"   ";
+   //cout<<rooti->rchild->rchild->rchild->class_label->label;
+   cout<<rooti->rchild->rchild->lchild->class_label->label;
  return(0); 
 }
