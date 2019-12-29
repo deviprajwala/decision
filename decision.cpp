@@ -24,6 +24,7 @@ struct node
 //here we define a structure named node which contains the elements such as test condition,label,id and pointers lchild and rchild which is necessary for the fulfillment of the tree growth algorithm.
 {
  string label;
+ int id;
  struct node *lchild;
  struct node *rchild;
  int condition_id;
@@ -44,27 +45,28 @@ struct retur
   int id;
 };
 
-struct node *newnode(string label)
+struct node *newnode(string label,int i)
 {
   struct node *temp =  new struct node();
   temp->label = label;
+  temp->id=i;
   temp->lchild = temp->rchild = NULL;
   return temp;
 }
 
-struct node* insert(struct node* root,struct node* child, string key,int id)
+struct node* insert(struct node* root,struct node* child,int id)
 {
    //tree is empty,return a new node
-  if (root == NULL) return newnode(key);
+  if (root == NULL) return root;
 
     //if tree is not empty find the proper place to insert new node
   if (id==1)
   {
-   root->lchild  = insert(root,child,key,id);
+   root->lchild  = child;
   }
   else if(id==0)
   { 
-  root->rchild = insert(root,child,key,id);
+  root->rchild = child;
   }
  
 return root;
@@ -148,7 +150,7 @@ struct node* animals::tree_growth(string atribute[10],struct data_record data,st
     if(s.id==1)//if the stopping condition is met i.e all data points have same label
     {
      struct node* leaf;
-     leaf = newnode(s.label);//leaf node is created and label is assigned
+     leaf = newnode(s.label,100);//leaf node is created and label is assigned
      return leaf;
     }
     else
@@ -157,12 +159,15 @@ struct node* animals::tree_growth(string atribute[10],struct data_record data,st
      left_record=split_record(1,v,data,atribute);//spilt the the records which satisfies the condition
      right_record=split_record(0,v,data,atribute);//spilt the the records which does not satisfy the 
                                                 //condition
-   
-    left_child=tree_growth(atribute,left_record,root);
-    right_child=tree_growth(atribute,right_record,root);//check for further growth in child nodes
+     left_child=newnode(atributes[v],1);
+     right_child=newnode(atributes[v],0);
+     root = insert(root,left_child,1);
+     root = insert(root,right_child,0);
+
+     left_child=tree_growth(atribute,left_record,root);
+     right_child=tree_growth(atribute,right_record,root);//check for further growth in child nodes
     
-    root = insert(root,left_child,atributes[v],1);
-    root = insert(root,right_child,atributes[v],0);
+     
     }
    
   
@@ -634,6 +639,7 @@ int main()
     rooti=NULL;
     }
   
+  rooti=newnode("start",100);
   rooti=m.tree_growth(m.atribute,m.data,rooti);
   }
    /*struct data_record left_record;
@@ -645,6 +651,6 @@ int main()
      cout<<(*it).first<<"  "<<(*it).second<<"\n";
    }
    */
-   
+   cout<<rooti->lchild->label;
  return(0); 
 }
