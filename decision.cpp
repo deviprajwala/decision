@@ -144,30 +144,31 @@ struct node* animals::tree_growth(string atribute[10],struct data_record data,st
    int v;
    retur s;
    s=stopping_condition(data);//function to check the stopping conition
-   if(s.id==1)//if the stopping condition is met i.e all data points have same label
+   if(data.label.size()!=0)
    {
+    if(s.id==1)//if the stopping condition is met i.e all data points have same label
+    {
      struct node* leaf;
      root = insert(root, s.label,99);//leaf node is created and label is assigned
      return leaf;
-   }
-   if(s.id==99)
-   {
-     goto label;
-   }
-   else
-   {
-   v=get_best_split(atribute);// v is the condition id which is returned by best split function
-   left_record=split_record(1,v,data,atribute);//spilt the the records which satisfies the condition
-   right_record=split_record(0,v,data,atribute);//spilt the the records which does not satisfy the 
+    }
+    else
+    {
+     if(data.label.size()!=0)
+     {
+     v=get_best_split(atribute);// v is the condition id which is returned by best split function
+     left_record=split_record(1,v,data,atribute);//spilt the the records which satisfies the condition
+     right_record=split_record(0,v,data,atribute);//spilt the the records which does not satisfy the 
                                                 //condition
    
-   left_child=tree_growth(atribute,left_record,root);
-   right_child=tree_growth(atribute,right_record,root);//check for further growth in child nodes
-   
-   root = insert(root,atribute[v],1);
-   root = insert(root,atribute[v],0);
+    left_child=tree_growth(atribute,left_record,root);
+    right_child=tree_growth(atribute,right_record,root);//check for further growth in child nodes
+    
+    root = insert(root,atribute[v],1);
+    root = insert(root,atribute[v],0);
+    }
    }
-label:
+  }
 return root;
 }
 
@@ -643,6 +644,6 @@ int main()
      cout<<(*it).first<<"  "<<(*it).second<<"\n";
    }
    */
-   cout<<rooti->lchild->condition_id;
+   //cout<<rooti->lchild->condition_id;
  return(0); 
 }
