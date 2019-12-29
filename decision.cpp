@@ -22,7 +22,6 @@ float gini;//it holds the calculated value of gini index
 struct node
 //here we define a structure named node which contains the elements such as test condition,label,id and pointers lchild and rchild which is necessary for the fulfillment of the tree growth algorithm.
 {
- string test_condition;
  string label;
  struct node *lchild;
  struct node *rchild;
@@ -44,23 +43,46 @@ struct retur
   int id;
 };
 
-struct node* getnode()
+struct node *newnode(string label,int i)
 {
-  node *x=(node*)malloc(sizeof(struct node));
-  return x;
+  struct node *temp =  new struct node();
+  temp->label = label;
+  temp->condition_id=i;
+  temp->lchild = temp->rchild = NULL;
+  return temp;
 }
+
+struct node* insert(struct node* node, string key,int id)
+{
+   //tree is empty,return a new node
+  if (node == NULL) return newnode(key,id);
+
+    //if tree is not empty find the proper place to insert new node
+  if (id ==1)
+  {
+   node->lchild  = insert(node->lchild, key,id);
+  }
+  else
+  { 
+  node->rchild = insert(node->rchild, key,id);
+  }
+ 
+return node;
+//return the node pointer
+}
+
+
 
 class animals
 // we define a class named animals which contains the data records and the functions which can be performed on the available data set
 {
   public:
-          
           string atribute[10];//array of strings which contain the names of the attributes.
           struct data_record data;//structure in which the data records are present
           
  
   public:
-         struct node* tree_growth(string atribut[10],struct data_record data);
+         struct node* tree_growth(string atribut[10],struct data_record data,struct node *root);
          //induction algorithm for the growth of the tree which performs the performance of the decision 
          //tree.
  
@@ -91,11 +113,11 @@ class animals
          //in this function we get the gini index for each of the attribute by calling a function
          //gini_count2 and get the best attribute for splitting which is the one with least value 
 
-         struct retur stopping_condition();
+         struct retur stopping_condition(struct data_record data);
          //this function checks for the stopping condition which is satisfied if all the data points 
          //in the data set has the same label
 
-         struct data_record split_record(int i,int attri,data_record data,string atribute[10]);
+         struct data_record split_record(int i,int attri,struct data_record data,string atribute[10]);
          //here  the data record is splitted as per the attribute test condition so that further 
          //checking can be done to split further or make it as a leaf node.
          
@@ -113,44 +135,44 @@ class animals
          
 };
 
-struct node* animals::tree_growth(string atribute[10],struct data_record data)
+struct node* animals::tree_growth(string atribute[10],struct data_record data,struct node* root)
 //induction algorithm for the growth of the tree which performs the performance of the decision tree.
 {
-  
    struct data_record left_record,right_record;
-   struct node* root;
    struct node* right_child;
    struct node* left_child;
    int v;
    retur s;
-   s=stopping_condition();//function to check the stopping conition
+   s=stopping_condition(data);//function to check the stopping conition
    if(s.id==1)//if the stopping condition is met i.e all data points have same label
    {
-
      struct node* leaf;
-     leaf=getnode();
-     leaf->label=s.label;//leaf node is created and label is assigned
+     root = insert(root, s.label,99);//leaf node is created and label is assigned
      return leaf;
+   }
+   if(s.id==99)
+   {
+     goto label;
    }
    else
    {
-
-   right_child=getnode();
-   left_child=getnode();
    v=get_best_split(atribute);// v is the condition id which is returned by best split function
    left_record=split_record(1,v,data,atribute);//spilt the the records which satisfies the condition
-   right_record=split_record(0,v,data,atribute);//spilt the the records which does not satisfy the condition
+   right_record=split_record(0,v,data,atribute);//spilt the the records which does not satisfy the 
+                                                //condition
    
-   left_child=tree_growth(atribute,left_record);
-   right_child=tree_growth(atribute,right_record);//check foe further growth in child nodes
+   left_child=tree_growth(atribute,left_record,root);
+   right_child=tree_growth(atribute,right_record,root);//check for further growth in child nodes
    
-   right_child->test_condition=atribute[v];
-   right_child->test_condition=atribute[v];
-   root->rchild=right_child;//assign the child nodes to the root
-   root->lchild=left_child;
+   root = insert(root,atribute[v],1);
+   root = insert(root,atribute[v],0);
    }
+label:
 return root;
 }
+
+
+
 
 void animals::input(int n,map<int,string>&mapn)
 //this is the definition of the function which is present in the class animals for reading the input data set into the map
@@ -271,7 +293,7 @@ float animals::gini_count3()
 //here in this function we actully calculate the value of the gini index with the help of the values 
 //which was calculated earlier. 
 {
-  float v1,v2,x1,x2,yes_total,no_total,yes_totals,no_totals,total,gini;
+  float v1,v2,yes_total,no_total,yes_totals,no_totals,total,gini;
   
   yes_total=a1+b1+c1+d1+e1;//number of values which satisfies the condition.
   no_total=a2+b2+c2+d2+e2;//number of values which does not satisfy the condition.
@@ -330,38 +352,33 @@ int animals::get_best_split(string atribute[10])
    v[i]=gini_count2(data.gives_birth,data.label);
    }
  i++;
- v[i]=100;
  if(atribute[i]!="null")
    {
-   v[i++]=gini_count2(data.aquatic,data.label);
+   v[i]=gini_count2(data.aquatic,data.label);
    }
  i++;
- v[i]=100;
  if(atribute[i]!="null")
    {
-   v[i++]=gini_count2(data.aerial,data.label);
+   v[i]=gini_count2(data.aerial,data.label);
    }
  i++;
- v[i]=100;
  if(atribute[i]!="null")
    {
-   v[i++]=gini_count2(data.legs,data.label);
+   v[i]=gini_count2(data.legs,data.label);
    }
  i++;
- v[i]=100;
  if(atribute[i]!="null")
    {
    v[i]=gini_count2(data.hibernates,data.label);
    }
  i++;
- v[i]=100;
  min=100;
- for(int i=1;i<v.size();i++)
+ for(int j=1;j<v.size();j++)
  {
-    if(v.at(i)<min)//we check fo rthe value which has the least value
+    if(v.at(j)<min&&v.at(j)!=0)//we check fo rthe value which has the least value
     {
-      min=v.at(i);
-      attribute=i;
+      min=v.at(j);
+      attribute=j;
     } 
  }
  i=1;
@@ -371,7 +388,7 @@ int animals::get_best_split(string atribute[10])
 
 
 
-struct retur animals::stopping_condition()
+struct retur animals::stopping_condition(struct data_record data)
 //this function checks for the stopping condition which is satisfied if all the data points in the data
 //set has the same label
 {
@@ -379,24 +396,34 @@ struct retur animals::stopping_condition()
   map<int,string>::iterator it2=data.label.begin();
   //iterator it2 has the address of the first element in the map label which is present in the structure 
   //named data
-  string test=(*it2).second;
-  r.label=test;
-  //test contains the label of the first element of the map
-  for(map<int,string>::iterator it2=data.label.begin();it2!=data.label.end();it2++)
-  //map iterated with the help of iterator it2 and checked for equalities of the label if any of the 
-  //element fails to satisfy the condition then -1 is returned
+  if(data.label.size()>0)
   {
+    string test=(*it2).second;
+    r.label=test;
+    //test contains the label of the first element of the map
+    for(map<int,string>::iterator it2=data.label.begin();it2!=data.label.end();it2++)
+   //map iterated with the help of iterator it2 and checked for equalities of the label if any of the 
+   //element fails to satisfy the condition then -1 is returned
+    {
       if(test!=(*it2).second)
       {
         r.id=-1;
         return r;//false
       }       
-  }
+    }
   r.id=1;
+  }
+  else if(data.label.size()==0)
+  {
+   r.id=99;
+   r.label="completed";
+   cout<<"done with data!!!"<<"\n";  
+  
+  }
   return r;
   //if the stopping condition is satisfied then 1 is returned i.e all the labels are similar
 }
-struct data_record animals::split_record(int i,int attri,data_record data,string atribute[10])
+struct data_record animals::split_record(int i,int attri,struct data_record data,string atribute[10])
 //here  the data record is splitted as per the attribute test condition so that further checking can be 
 //done to split further or make it as a leaf node
 {
@@ -566,7 +593,6 @@ struct data_record animals :: splitting(map <int,int>&m1,int i)
 
 int main()
 {
- node *root;
  string str;
  //cout<<"enter the value of n";
  //here n is the number of data points which are present in the data set.
@@ -605,9 +631,9 @@ int main()
   }
 
 
-  root=getnode();
+  struct node *rooti = NULL;
   
-  root=m.tree_growth(m.atribute,m.data);
+  rooti=m.tree_growth(m.atribute,m.data,rooti);
    /*struct data_record left_record;
    int v=m.get_best_split();// v is the condition id which is returned by best split function
    //cout<<v<<"h";
@@ -617,6 +643,6 @@ int main()
      cout<<(*it).first<<"  "<<(*it).second<<"\n";
    }
    */
-   
+   cout<<rooti->lchild->condition_id;
  return(0); 
 }
