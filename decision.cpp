@@ -15,6 +15,7 @@ int n;//n is the number of data points which are present in the data set.
 int label_num;//label_num is the number of class_labels which are present in the data set.
 int attribute_num;//attribute_num is the number of attributes which are present in the data set.
 string labe[10];//array of labels which contain the names of the attributes.
+string atributes[10];//array of strings which contain the names of the attributes.
 float a1,a2,b1,b2,c1,c2,d1,d2,e1,e2;//these values are needed for the calculation of gini index
 float gini;//it holds the calculated value of gini index 
 
@@ -43,31 +44,30 @@ struct retur
   int id;
 };
 
-struct node *newnode(string label,int i)
+struct node *newnode(string label)
 {
   struct node *temp =  new struct node();
   temp->label = label;
-  temp->condition_id=i;
   temp->lchild = temp->rchild = NULL;
   return temp;
 }
 
-struct node* insert(struct node* node, string key,int id)
+struct node* insert(struct node* root,struct node* child, string key,int id)
 {
    //tree is empty,return a new node
-  if (node == NULL) return newnode(key,id);
+  if (root == NULL) return newnode(key);
 
     //if tree is not empty find the proper place to insert new node
-  if (id ==1)
+  if (id==1)
   {
-   node->lchild  = insert(node->lchild, key,id);
+   root->lchild  = insert(root,child,key,id);
   }
-  else
+  else if(id==0)
   { 
-  node->rchild = insert(node->rchild, key,id);
+  root->rchild = insert(root,child,key,id);
   }
  
-return node;
+return root;
 //return the node pointer
 }
 
@@ -131,7 +131,8 @@ class animals
          //In this function we get the map of each of the attribute which are splitted as per the 
          //requirement we combine all these maps to a structure data_record and return it to the
          //  calling function.
-
+         
+         
          
 };
 
@@ -144,18 +145,14 @@ struct node* animals::tree_growth(string atribute[10],struct data_record data,st
    int v;
    retur s;
    s=stopping_condition(data);//function to check the stopping conition
-   if(data.label.size()!=0)
-   {
     if(s.id==1)//if the stopping condition is met i.e all data points have same label
     {
      struct node* leaf;
-     root = insert(root, s.label,99);//leaf node is created and label is assigned
+     leaf = newnode(s.label);//leaf node is created and label is assigned
      return leaf;
     }
     else
     {
-     if(data.label.size()!=0)
-     {
      v=get_best_split(atribute);// v is the condition id which is returned by best split function
      left_record=split_record(1,v,data,atribute);//spilt the the records which satisfies the condition
      right_record=split_record(0,v,data,atribute);//spilt the the records which does not satisfy the 
@@ -164,11 +161,11 @@ struct node* animals::tree_growth(string atribute[10],struct data_record data,st
     left_child=tree_growth(atribute,left_record,root);
     right_child=tree_growth(atribute,right_record,root);//check for further growth in child nodes
     
-    root = insert(root,atribute[v],1);
-    root = insert(root,atribute[v],0);
+    root = insert(root,left_child,atributes[v],1);
+    root = insert(root,right_child,atributes[v],0);
     }
-   }
-  }
+   
+  
 return root;
 }
 
@@ -414,13 +411,7 @@ struct retur animals::stopping_condition(struct data_record data)
     }
   r.id=1;
   }
-  else if(data.label.size()==0)
-  {
-   r.id=99;
-   r.label="completed";
-   cout<<"done with data!!!"<<"\n";  
-  
-  }
+ 
   return r;
   //if the stopping condition is satisfied then 1 is returned i.e all the labels are similar
 }
@@ -628,13 +619,23 @@ int main()
  {
    cin>>str;
    m.atribute[i]=str;
+   atributes[i]=str;
    //cout<<atribute[i]<<"  "<<i;
   }
 
-
-  struct node *rooti = NULL;
+  //cout<<"enter the number of data set";
+  int x;
+  cin>>x;
+  struct node *rooti;
+  for(int i=0;i<x;i++)
+  {
+   if(i==0)
+   {
+    rooti=NULL;
+    }
   
   rooti=m.tree_growth(m.atribute,m.data,rooti);
+  }
    /*struct data_record left_record;
    int v=m.get_best_split();// v is the condition id which is returned by best split function
    //cout<<v<<"h";
@@ -644,6 +645,6 @@ int main()
      cout<<(*it).first<<"  "<<(*it).second<<"\n";
    }
    */
-   //cout<<rooti->lchild->condition_id;
+   
  return(0); 
 }
