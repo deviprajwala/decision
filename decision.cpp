@@ -25,11 +25,11 @@ struct node
 {
  string label;
  int id;
- struct node *lchild;
- struct node *rchild;
- struct node *parent;
- struct node *class_label;
- int condition_id;
+ struct node *lchild;//pointer to the left child
+ struct node *rchild;//pointer to the right child
+ struct node *parent;//pointer to the parent
+ struct node *class_label;//pointer to the class label which is a leaf node
+ 
 };
 
 
@@ -42,12 +42,15 @@ struct data_record
 
 
 struct retur
+//here we define a structure named retur which contains the elements such as label and id which is necessary for checking the stopping condition.
 {
   string label;
   int id;
 };
 
 struct node *newnode(string label,int i)
+//this structure is defined to get a node structure and assign the label to it make its pointers as null.
+//this function is used when a node is not a leaf. 
 {
   struct node *temp =  new struct node();
   temp->label = label;
@@ -57,6 +60,8 @@ struct node *newnode(string label,int i)
 }
 
 struct node *newnode1(string label,int i,struct node* root)
+//this structure is defined to get a node structure and assign the label,class label to it make its pointers as null.This function is used when a node is a leaf.
+ 
 {
   struct node *temp =  new struct node();
   temp->label = label;
@@ -176,10 +181,12 @@ struct node* animals::tree_growth(string atribute[10],struct data_record data,st
      left_record=split_record(1,v,data,atribute);//spilt the the records which satisfies the condition
      right_record=split_record(0,v,data,atribute);//spilt the the records which does not satisfy the 
                                                 //condition
-     left_child=newnode(atributes[v],1);
-     right_child=newnode(atributes[v],0);
-     lpar = insert(root,left_child,1);
-     rpar = insert(root,right_child,0);
+     
+    
+     left_child=newnode(atributes[v],1);//get a node for the left child
+     right_child=newnode(atributes[v],0);//get a node for the right child
+     lpar = insert(root,left_child,1);//insert a left child and get its parent
+     rpar = insert(root,right_child,0);//insert a right child and get its parent
 
      left_child=tree_growth(atribute,left_record,lpar);
      right_child=tree_growth(atribute,right_record,rpar);//check for further growth in child nodes
@@ -361,32 +368,32 @@ int animals::get_best_split(string atribute[10])
  int i=1;
  float min;
  int attribute=1;
- if(atribute[i]!="null")
+ if(atribute[i]!="null")//checks whether the data had already been split by this attribute1 or not
    {
    v[i]=gini_count2(data.body_temperature,data.label);
    }
  i++;
- if(atribute[i]!="null")
+ if(atribute[i]!="null")//checks whether the data had already been split by this attribute2 or not
    {
    v[i]=gini_count2(data.gives_birth,data.label);
    }
  i++;
- if(atribute[i]!="null")
+ if(atribute[i]!="null")//checks whether the data had already been split by this attribute3 or not
    {
    v[i]=gini_count2(data.aquatic,data.label);
    }
  i++;
- if(atribute[i]!="null")
+ if(atribute[i]!="null")//checks whether the data had already been split by this attribute4 or not
    {
    v[i]=gini_count2(data.aerial,data.label);
    }
  i++;
- if(atribute[i]!="null")
+ if(atribute[i]!="null")//checks whether the data had already been split by this attribute5 or not
    {
    v[i]=gini_count2(data.legs,data.label);
    }
  i++;
- if(atribute[i]!="null")
+ if(atribute[i]!="null")//checks whether the data had already been split by this attribute6 or not
    {
    v[i]=gini_count2(data.hibernates,data.label);
    }
@@ -628,24 +635,24 @@ int main()
  //m.print(hibernates);
  //m.print(m.label);
  
- cin>>label_num;
+ cin>>label_num;//to get the number of labels
  for(int j=1;j<=label_num;j++)
  {
    cin>>str;
-   labe[j]=str;
+   labe[j]=str;//assigns the string value to the array
   }
 
- cin>>attribute_num;
+ cin>>attribute_num;//to get the number of arrays
  for(int i=1;i<=attribute_num;i++)
  {
    cin>>str;
-   m.atribute[i]=str;
+   m.atribute[i]=str;//assigns the value to the array
    atributes[i]=str;
    //cout<<atribute[i]<<"  "<<i;
   }
 
   //cout<<"enter the number of data set";
-  int x;
+  int x;//number of data sets
   cin>>x;
   struct node *rooti;
   for(int i=0;i<x;i++)
@@ -655,10 +662,11 @@ int main()
     rooti=NULL;
     }
   
-  rooti=newnode("start",100);
-  rooti=m.tree_growth(m.atribute,m.data,rooti);
+  rooti=newnode("start",100);//node is allocated
+  rooti=m.tree_growth(m.atribute,m.data,rooti);//tree growth function is called
   }
    
+   /*
    //cout<<rooti->label;
    //cout<<rooti->lchild->label<<"  ";
    //cout<<rooti->lchild->lchild->label<<"   ";
@@ -667,7 +675,10 @@ int main()
    //cout<<rooti->rchild->lchild->class_label->label<<"   ";//amphibian
    //cout<<rooti->rchild->rchild->rchild->class_label->label;//reptile
    //cout<<rooti->rchild->rchild->lchild->class_label->label;//fish
-   
+   */   
+
+  /*these are redirected for the construction of the diagraph for the pictorial representation*/
+
    cout<<"digraph G {"<<"\n";
    cout<<rooti->label<<"->"<<rooti->lchild->label<<"yes"<<"\n";
    cout<<rooti->label<<"->"<<rooti->rchild->label<<"no"<<"\n";
@@ -691,6 +702,15 @@ int main()
 
    cout<<rooti->rchild->rchild->lchild->label<<"yes"<<"->";
    cout<<rooti->rchild->rchild->rchild->class_label->label<<"\n";
+
+
+   cout<<rooti->rchild->rchild->rchild->class_label->label;
+   cout<<"[ shape=rectangle]"<<"\n";
+   cout<<rooti->rchild->rchild->lchild->class_label->label<<"\n";
+   cout<<"[ shape=rectangle]"<<"\n";
+   cout<<rooti->rchild->lchild->class_label->label<<"[ shape=rectangle]"<<"\n";
+   cout<<rooti->lchild->lchild->class_label->label<<"[ shape=rectangle]"<<"\n";
+   cout<<rooti->lchild->rchild->class_label->label<<"[ shape=rectangle]"<<"\n";
    cout<<"}";
    
  return(0); 
