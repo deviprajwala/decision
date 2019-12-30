@@ -680,8 +680,8 @@ int main()
   /*these are redirected for the construction of the diagraph for the pictorial representation*/
 
    cout<<"digraph G {"<<"\n";
-   cout<<rooti->label<<"->"<<rooti->lchild->label<<"yes"<<"\n";
-   cout<<rooti->label<<"->"<<rooti->rchild->label<<"no"<<"\n";
+   cout<<rooti->label<<"->"<<rooti->lchild->label<<"warm"<<"\n";
+   cout<<rooti->label<<"->"<<rooti->rchild->label<<"cold"<<"\n";
    cout<<rooti->lchild->label<<"yes"<<"->"<<rooti->lchild->lchild->label<<"yes"<<"\n";
    cout<<rooti->lchild->label<<"yes"<<"->"<<rooti->lchild->rchild->label<<"no"<<"\n";
    cout<<rooti->lchild->lchild->label<<"yes"<<"->"<<rooti->lchild->lchild->class_label->label<<"\n";
